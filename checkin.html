@@ -283,6 +283,26 @@ th { background: #f8f1f3; color: var(--burgundy-800); font-size: 11px; text-tran
 .usher-list-body { margin: 0; padding-left: 18px; max-height: 240px; overflow: auto; font-size: 14px; }
 .usher-list-body li { margin: 4px 0; }
 
+
+.final-email-list {
+  margin-top: 12px; max-height: 280px; overflow: auto;
+  border: 1px solid var(--border); border-radius: 10px; background: #fff; padding: 8px 10px;
+}
+.final-email-list label {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 4px; border-bottom: 1px solid #f0e8eb; font-size: 13px; cursor: pointer;
+}
+.final-email-list label:last-child { border-bottom: none; }
+.final-email-list .meta { color: #75656a; font-size: 12px; }
+.final-email-list .sent-flag { color: #9a6700; font-weight: 700; }
+.final-email-list .no-email { color: #c62828; }
+#result.ok { background: #e9f7ec; border-color: #238636; }
+#result.warn { background: #fff8dc; border-color: #c9a24b; }
+#result.err { background: #ffeded; border-color: #c62828; }
+#result.admit-green { background: #e9f7ec; box-shadow: 0 0 0 3px rgba(35,134,54,.35); }
+#result.admit-orange { background: #fff4e0; box-shadow: 0 0 0 3px rgba(201,162,75,.4); }
+#result.admit-red { background: #ffeded; box-shadow: 0 0 0 3px rgba(198,40,40,.35); }
+
 </style>
 </head>
 
@@ -463,9 +483,25 @@ th { background: #f8f1f3; color: var(--burgundy-800); font-size: 11px; text-tran
         <p id="mgmtSeatAllocStatus" class="payment-status" style="margin-top:10px"></p>
       </div>
 
+
+      <div class="mgmt-block">
+        <h3>7. Final celebration email (Paid only)</h3>
+        <p class="mgmt-hint">
+          Sends only to guests marked <b>Paid</b>. Review the list, untick anyone who should not receive it, then send.
+          Already-sent guests are flagged; use Resend only when needed.
+        </p>
+        <div class="mgmt-actions">
+          <button type="button" id="mgmtFinalLoadBtn" class="small-btn">Load paid guests</button>
+          <button type="button" id="mgmtFinalSendBtn" class="payment-btn">Send Final Email</button>
+          <button type="button" id="mgmtFinalResendBtn" class="small-btn">Resend selected</button>
+        </div>
+        <div id="mgmtFinalList" class="final-email-list" hidden></div>
+        <p id="mgmtFinalStatus" class="payment-status" style="margin-top:10px"></p>
+      </div>
+
       <div class="mgmt-block mgmt-soon">
-        <h3>7. Share reports · 8. Email reminders</h3>
-        <p class="mgmt-hint">Coming next: email/WhatsApp share and bulk reminders by category.</p>
+        <h3>8. Share reports</h3>
+        <p class="mgmt-hint">Coming next: email/WhatsApp share by category.</p>
       </div>
     </section>
 
@@ -707,31 +743,40 @@ function renderResult(data) {
   const status = String(data?.status || "").toLowerCase();
   const name = data?.name || data?.guestName || "Guest";
 
+  const admit = String(data?.admit || "").toLowerCase();
+  const gid = data?.guestId || "";
+  let party = data.partySize != null ? data.partySize : data.pax;
+  if (party === undefined || party === null || party === "") party = data.plusOne ? 2 : 1;
+
   if (status === "ok" || status === "success") {
-    result.className = "ok";
-    let party = data.partySize;
-    if (party === undefined || party === null || party === "") party = data.plusOne ? 2 : 1;
-    let detail = `${escapeHtml(party)} ${Number(party) === 1 ? "guest" : "guests"} in party`;
+    const isGreen = admit === "green" || data.confirmed === true;
+    result.className = isGreen ? "ok admit-green" : "warn admit-orange";
+    let detail = `Guest ID: ${escapeHtml(gid || "—")} · ${escapeHtml(party)} ${Number(party) === 1 ? "pax" : "pax"}`;
     const p1 = String(data.plusOneName || "").trim();
     if (p1 && !/^(n\/a|na|none|no|nil|-)$/i.test(p1)) detail += ` · includes ${escapeHtml(p1)}`;
+    if (data.table) detail += ` · Table ${escapeHtml(data.table)}`;
     if (data.dietary) detail += ` · Dietary: ${escapeHtml(data.dietary)}`;
+    const line = isGreen ? "ADMIT · Paid / Confirmed" : "REFER TO DESK · Not confirmed";
     result.innerHTML = `
-      <div class="badge tick">✓</div>
-      <div class="status-line">Checked In</div>
+      <div class="badge tick">${isGreen ? "🟢" : "🟠"}</div>
+      <div class="status-line">${line}</div>
       <div class="guestName">${escapeHtml(name)}</div>
       <p class="detail">${detail}</p>
+      <p class="detail">${isGreen ? "Checked in successfully." : "Details found — please refer to the registration desk."}</p>
     `;
     return;
   }
 
   if (status === "already") {
-    result.className = "warn";
+    const isGreen = admit === "green" || data.confirmed === true;
+    result.className = isGreen ? "warn admit-green" : "warn admit-orange";
     const time = formatTime(data.time || data.checkedInAt || data.timestamp);
     result.innerHTML = `
       <div class="badge warnbadge">✓</div>
-      <div class="status-line">Already Checked In</div>
+      <div class="status-line">Already checked in${time ? " at " + escapeHtml(time) : ""}</div>
       <div class="guestName">${escapeHtml(name)}</div>
-      <p class="detail">${time ? "Checked in at " + escapeHtml(time) : "This guest has already been checked in."}</p>
+      <p class="detail">Guest ID: ${escapeHtml(gid || "—")} · ${escapeHtml(party)} pax${data.table ? " · Table " + escapeHtml(data.table) : ""}</p>
+      <p class="detail">${isGreen ? "Paid / confirmed." : "Not confirmed — refer to desk if needed."}</p>
     `;
     return;
   }
@@ -748,12 +793,12 @@ function renderResult(data) {
   }
 
   if (status === "not_found") {
-    result.className = "err";
+    result.className = "err admit-red";
     result.innerHTML = `
-      <div class="badge cross">✕</div>
-      <div class="status-line">Not Found</div>
-      <div class="guestName">No matching guest</div>
-      <p class="detail">Check the QR code or manually enter the Guest ID.</p>
+      <div class="badge cross">🔴</div>
+      <div class="status-line">Invalid / Unknown code</div>
+      <div class="guestName">Not found</div>
+      <p class="detail">${escapeHtml(data?.message || "No matching Guest ID. Do not admit — refer to registration.")}</p>
     `;
     return;
   }
@@ -823,6 +868,9 @@ async function initAdmin() {
   const closureCount = $("mgmtClosureCountBtn"); if (closureCount) closureCount.addEventListener("click", runMgmtClosureCount);
   const closureSend = $("mgmtClosureSendBtn"); if (closureSend) closureSend.addEventListener("click", runMgmtClosureSend);
   const seatAlloc = $("mgmtSeatAllocBtn"); if (seatAlloc) seatAlloc.addEventListener("click", runMgmtSeatAllocation);
+  const finalLoad = $("mgmtFinalLoadBtn"); if (finalLoad) finalLoad.addEventListener("click", loadFinalEmailAudience);
+  const finalSend = $("mgmtFinalSendBtn"); if (finalSend) finalSend.addEventListener("click", function () { sendFinalEmails(false); });
+  const finalResend = $("mgmtFinalResendBtn"); if (finalResend) finalResend.addEventListener("click", function () { sendFinalEmails(true); });
   closeMgmtPanel();
   await loadRsvpStatus();
   $("admSearch").addEventListener("input", renderTable);
@@ -1249,6 +1297,114 @@ function toggleMgmtPanel() {
 
 
 
+
+
+let finalEmailAudience = [];
+
+async function loadFinalEmailAudience() {
+  const box = $("mgmtFinalList");
+  const status = $("mgmtFinalStatus");
+  if (status) {
+    status.textContent = "Loading paid guests…";
+    status.className = "payment-status sending";
+  }
+  try {
+    const data = await apiGet("listFinalEmailAudience");
+    if (!data || data.status !== "success") throw new Error((data && data.message) || "Load failed");
+    finalEmailAudience = Array.isArray(data.guests) ? data.guests : [];
+    renderFinalEmailList();
+    if (status) {
+      status.textContent = data.message || (finalEmailAudience.length + " paid guest(s)");
+      status.className = "payment-status success";
+    }
+  } catch (e) {
+    if (status) {
+      status.textContent = "✕ " + (e.message || "Load failed");
+      status.className = "payment-status error";
+    }
+  }
+}
+
+function renderFinalEmailList() {
+  const box = $("mgmtFinalList");
+  if (!box) return;
+  if (!finalEmailAudience.length) {
+    box.hidden = false;
+    box.innerHTML = "<p class=\"meta\">No paid guests found.</p>";
+    return;
+  }
+  box.hidden = false;
+  box.innerHTML = finalEmailAudience.map(function (g, idx) {
+    const disabled = !g.hasEmail ? " disabled" : "";
+    const checked = g.selectedDefault ? " checked" : "";
+    const flags = [];
+    if (!g.hasEmail) flags.push("<span class=\"no-email\">No email</span>");
+    if (g.alreadySent) flags.push("<span class=\"sent-flag\">Already sent</span>");
+    return "<label><input type=\"checkbox\" class=\"final-email-cb\" data-idx=\"" + idx + "\" value=\"" +
+      escapeHtml(g.guestId) + "\"" + checked + disabled + ">" +
+      "<span><strong>" + escapeHtml(g.name || "Guest") + "</strong> · " + escapeHtml(g.guestId) +
+      "<div class=\"meta\">" + escapeHtml(g.email || "—") + " · " + (g.pax || g.partySize || 1) + " pax" +
+      (flags.length ? " · " + flags.join(" · ") : "") + "</div></span></label>";
+  }).join("");
+}
+
+function selectedFinalGuestIds(includeAlreadySent) {
+  const boxes = document.querySelectorAll(".final-email-cb:checked");
+  const ids = [];
+  boxes.forEach(function (cb) {
+    const idx = Number(cb.getAttribute("data-idx"));
+    const g = finalEmailAudience[idx];
+    if (!g || !g.hasEmail) return;
+    if (!includeAlreadySent && g.alreadySent) return;
+    ids.push(g.guestId);
+  });
+  return ids;
+}
+
+async function sendFinalEmails(resend) {
+  const status = $("mgmtFinalStatus");
+  const btn = resend ? $("mgmtFinalResendBtn") : $("mgmtFinalSendBtn");
+  if (!finalEmailAudience.length) {
+    await loadFinalEmailAudience();
+  }
+  const ids = selectedFinalGuestIds(!!resend);
+  if (!ids.length) {
+    if (status) {
+      status.textContent = resend
+        ? "Select paid guests to resend (including already-sent)."
+        : "Select at least one paid guest who has not been emailed yet.";
+      status.className = "payment-status error";
+    }
+    return;
+  }
+  const preview = ids.slice(0, 12).join(", ") + (ids.length > 12 ? "…" : "");
+  if (!confirm((resend ? "RESEND final email to " : "Send final email to ") + ids.length +
+      " paid guest(s)?\n\n" + preview + "\n\nUnpaid guests are never included.")) return;
+  if (status) {
+    status.textContent = "Sending final emails…";
+    status.className = "payment-status sending";
+  }
+  if (btn) btn.disabled = true;
+  try {
+    const data = await apiGet("sendFinalEmail", { ids: ids.join(","), force: resend ? "1" : "0" });
+    if (!data || data.status !== "success") throw new Error((data && data.message) || "Send failed");
+    if (status) {
+      status.textContent = "✓ " + (data.message || "Done");
+      status.className = "payment-status success";
+    }
+    showToast(data.message || "Final emails sent");
+    await loadFinalEmailAudience();
+  } catch (e) {
+    console.error(e);
+    if (status) {
+      status.textContent = "✕ " + (e.message || "Send failed");
+      status.className = "payment-status error";
+    }
+    showToast(e.message || "Send failed");
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
 
 async function runMgmtSeatAllocation() {
   const status = $("mgmtSeatAllocStatus");
