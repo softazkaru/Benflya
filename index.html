@@ -435,9 +435,49 @@
 #rsvp input,#rsvp select,#rsvp textarea{width:100%;box-sizing:border-box;min-height:48px;border-radius:10px;border:1px solid rgba(183,110,121,.35);background:#fff;padding:12px 14px;font:inherit;outline:none}
 #rsvp textarea{min-height:112px;resize:vertical}.rsvp-full,#rsvp .full-width{grid-column:1/-1}
 @media(max-width:700px){#rsvp form,#rsvp .rsvp-form{grid-template-columns:1fr;gap:14px}#rsvp .rsvp-full,#rsvp .full-width{grid-column:auto}#rsvp input,#rsvp select,#rsvp textarea{font-size:16px}#rsvp .rsvp-card{padding:20px 16px}}
+
+#siteGate {
+  position: fixed; inset: 0; z-index: 99999;
+  display: flex; align-items: center; justify-content: center;
+  background: #2c0a15; color: #fdf9f6;
+  padding: 24px;
+}
+#siteGate.hidden { display: none !important; }
+.site-gate-card {
+  width: 100%; max-width: 400px; text-align: center;
+  background: #fdf9f6; color: #220812;
+  border-radius: 16px; padding: 28px 22px;
+  box-shadow: 0 16px 48px rgba(0,0,0,.35);
+}
+.site-gate-card h1 {
+  margin: 0 0 8px; font-size: 1.4rem; font-weight: normal; color: #55162A;
+}
+.site-gate-card p { margin: 0 0 18px; font-size: 14px; color: #75656a; line-height: 1.5; }
+.site-gate-card input {
+  width: 100%; min-height: 44px; padding: 10px 12px; margin-bottom: 12px;
+  border: 1px solid #e4d9dd; border-radius: 8px; font: inherit; text-align: center;
+}
+.site-gate-card button {
+  width: 100%; min-height: 44px; border: none; border-radius: 8px;
+  background: #55162A; color: #fdf9f6; font-weight: 700; font: inherit; cursor: pointer;
+}
+.site-gate-err { color: #c62828; font-size: 13px; min-height: 1.2em; margin-top: 10px; }
+body.site-locked > *:not(#siteGate) { visibility: hidden; }
+
 </style>
 </head>
-<body>
+<body class="site-locked">
+
+<div id="siteGate" role="dialog" aria-modal="true" aria-labelledby="siteGateTitle">
+  <div class="site-gate-card">
+    <h1 id="siteGateTitle">Benson &amp; Precious</h1>
+    <p>This page is private. Enter the password to view our thank-you note and gallery.</p>
+    <input type="password" id="siteGatePass" placeholder="Password" autocomplete="current-password">
+    <button type="button" id="siteGateBtn">Enter</button>
+    <p class="site-gate-err" id="siteGateErr"></p>
+  </div>
+</div>
+
 
 <a class="skip" href="#story">Skip to content</a>
 
@@ -452,10 +492,9 @@
   <div class="nav-links" id="navLinks">
     <a href="#story">Our Story</a>
     <a href="#details">Details</a>
-    <a href="#schedule">Program</a>
     <a href="#gallery">Gallery</a>
     <a href="#faq">FAQ</a>
-    <a href="#rsvp" class="nav-cta">RSVP</a>
+    <a href="#gallery" class="nav-cta">Gallery</a>
   </div>
 </nav>
 
@@ -476,13 +515,13 @@
   <canvas id="petals" aria-hidden="true"></canvas>
 
   <div class="hero-content">
-    <p class="hero-kicker reveal">Request the honour of your presence</p>
+    <p class="hero-kicker reveal">Thank you for celebrating with us</p>
     <h1 class="hero-names">
       <span class="mask" style="--d:.1s"><span class="mask-inner" data-bind="partnerA">Benson</span></span>
       <span class="mask" style="--d:.28s"><span class="mask-inner amp">&amp;</span></span>
       <span class="mask" style="--d:.42s"><span class="mask-inner" data-bind="partnerB">Precious</span></span>
     </h1>
-    <p class="hero-date reveal" style="--d:.6s" id="heroDateLine">Saturday, October 10, 2026 · Doha, Qatar</p>
+    <p class="hero-date reveal" style="--d:.6s" id="heroDateLine">10 October 2026 · Doha, Qatar — thank you</p>
 
     <div class="flourish reveal" style="--d:.7s" aria-hidden="true">
       <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M13 2C13 8 8 13 2 13c6 0 11 5 11 11 0-6 5-11 11-11-6 0-11-5-11-11Z" stroke="currentColor" stroke-width="1.2"/></svg>
@@ -500,7 +539,7 @@
     <p class="cd-note reveal" style="--d:.9s" id="cdNote">…counting every heartbeat until “I do.”</p>
 
     <div class="hero-ctas reveal" style="--d:1s">
-      <a class="btn btn-solid" href="#rsvp">RSVP with Love</a>
+      <a class="btn btn-solid" href="#gallery">View gallery</a>
       <a class="btn btn-ghost on-dark" href="#schedule" style="border-color:var(--rose-400)">View Program</a>
     </div>
   </div>
@@ -693,6 +732,16 @@
 </section>
 
 <!-- ================= GALLERY ================= -->
+<section id="thanks" class="on-dark" style="padding:clamp(48px,8vw,90px) 0 0">
+  <div class="wrap" style="text-align:center">
+    <p class="sec-kicker">With love</p>
+    <h2 class="sec-title">Thank you</h2>
+    <p class="sec-sub" style="max-width:38ch;margin-inline:auto">
+      For celebrating with us on 10 October 2026 in Doha. Your presence, prayers, and joy made our day complete.
+    </p>
+  </div>
+</section>
+
 <section id="gallery" class="on-dark">
   <div class="wrap">
     <header class="sec-head" style="text-align:center">
@@ -702,537 +751,7 @@
     </header>
 
     <div class="gallery" id="galleryGrid">
-      <figure class="gal-item has-img reveal"><img class="gallery-photo" src="images/gallery-hall.jpg" alt="Precious" loading="lazy"><figcaption class="gal-cap">Precious</figcaption></figure>
-      <figure class="gal-item has-img reveal" style="--d:.06s"><img class="gallery-photo ar-45" src="images/couple.jpg" alt="The Couple" loading="lazy"><figcaption class="gal-cap">The Couple</figcaption></figure>
-      <figure class="gal-item has-img reveal" style="--d:.06s">
-  <img class="gallery-photo ar-45" src="images/Benson.png" alt="Benson" loading="lazy">
-  <figcaption class="gal-cap">Benson</figcaption>
-</figure>
-      <figure class="gal-item has-img reveal" style="--d:.12s"><img class="ar-34" src="https://image.qwenlm.ai/public_source/eae6b0ee-7ad4-4a2f-9ffd-2280a03a0202/12a566b0e-c4b0-434f-8196-847bc6460a87.png" alt="Wedding rings on burgundy silk" loading="lazy"><figcaption class="gal-cap">The Rings</figcaption></figure>
-      <figure class="gal-item has-img reveal" style="--d:.06s"><img class="ar-43" src="https://image.qwenlm.ai/public_source/eae6b0ee-7ad4-4a2f-9ffd-2280a03a0202/1cd882175-a275-4db5-a5fb-6818b2eb7f88.png" alt="Doha West Bay skyline at dusk" loading="lazy"><figcaption class="gal-cap">The City</figcaption></figure>
-      <figure class="gal-item has-img reveal" style="--d:.12s"><img class="ar-11" src="https://image.qwenlm.ai/public_source/eae6b0ee-7ad4-4a2f-9ffd-2280a03a0202/1f31d360e-6f35-421e-a6f4-cdb0b12b3f9b.png" alt="Bridal bouquet of burgundy and caramel roses" loading="lazy"><figcaption class="gal-cap">The Bouquet</figcaption></figure>
-      <figure class="gal-item has-img reveal" style="--d:.18s"><img class="ar-45" src="https://image.qwenlm.ai/public_source/eae6b0ee-7ad4-4a2f-9ffd-2280a03a0202/1ee624e08-2f53-47fd-b338-8551ec7a17bb.png" alt="Reception table with candles and roses" loading="lazy"><figcaption class="gal-cap">The Table</figcaption></figure>
-      <figure class="gal-item has-img reveal" style="--d:.12s"><img class="ar-34" src="https://image.qwenlm.ai/public_source/eae6b0ee-7ad4-4a2f-9ffd-2280a03a0202/17e8c0f8d-1beb-470e-a63f-b18c27da6baf.png" alt="Two-tier burgundy and blush wedding cake" loading="lazy"><figcaption class="gal-cap">The Cake</figcaption></figure>
-      <figure class="gal-item has-img reveal" style="--d:.18s"><img class="ar-45" src="https://image.qwenlm.ai/public_source/eae6b0ee-7ad4-4a2f-9ffd-2280a03a0202/1bab539bd-74c0-425e-89b0-8ea7812cc1e6.png" alt="Burgundy rose and pampas floral arch" loading="lazy"><figcaption class="gal-cap">The Roses</figcaption></figure>
+      <p id="galleryLoading" style="text-align:center;color:#c9b8be;padding:24px;column-span:all">Loading gallery…</p>
     </div>
   </div>
 </section>
-
-<!-- ================= RSVP (STRUCTURED + WHATSAPP REMINDER) ================= -->
-<section id="rsvp" class="on-dark">
-  <div class="wrap">
-    <!-- Shown only when RSVP is closed / OFF -->
-    <div id="rsvpClosedView" class="rsvp-closed-view" hidden>
-      <header class="sec-head" style="text-align:center">
-        <p class="sec-kicker">Kindly Respond</p>
-        <h2 class="sec-title">RSVP Closed</h2>
-        <p class="sec-sub" style="max-width:36ch;margin-inline:auto">Reach out via WhatsApp to RSVP.</p>
-        <div class="flourish" aria-hidden="true" style="justify-content:center;margin:22px auto">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.2 7.3L20 12l-6.8 2.7L12 22l-1.2-7.3L4 12l6.8-2.7z"/></svg>
-        </div>
-        <a class="btn btn-solid" data-wa target="_blank" rel="noopener" style="margin-top:8px">WhatsApp to RSVP ✦</a>
-        <p style="margin-top:20px;font-size:14px;color:var(--rose-400)">
-          Already registered?
-          <button type="button" id="openStatusLookup" class="status-link-btn">Check your status</button>
-        </p>
-      </header>
-
-    </div>
-
-    <!-- Shown only when RSVP is open / ON -->
-    <div id="rsvpOpenView" class="rsvp-open-view">
-      <header class="sec-head" style="text-align:center">
-        <p class="sec-kicker reveal">Kindly Respond</p>
-        <h2 class="sec-title mask"><span class="mask-inner">Secure Your Seat  QAR 130</span></h2>
-        <p class="sec-sub reveal" style="--d:.15s">Please reply by <span data-bind="rsvpDeadline">September 19, 2026</span>. RSVP closes September 19, 2026
-Your RSVP includes your seat and reception meal, and creates your private wedding QR pass, your entry ticket on the day.</p>
-      </header>
-      <div class="rsvp-grid">
-        <div class="rsvp-card reveal">
-          <h3>Reserve your place ✦</h3>
-          <p>Complete the form below. If attending, you'll receive a unique QR code by email for fast entry on the wedding day.</p>
-          <form id="rsvpForm" class="rsvp-form">
-            <label>Full name<input required name="name" autocomplete="name" placeholder="Your full name"></label>
-            <label>Email address<input required type="email" name="email" autocomplete="email" placeholder="you@example.com"></label>
-            <label>Phone number<input required type="tel" name="phone" autocomplete="tel" placeholder="+974 XXXX XXXX"></label>
-            <label>Will you attend?
-              <select required name="attending"><option value="">Select</option><option value="yes">Yes — joyfully</option><option value="no">No — regretfully</option></select>
-            </label>
-            <label>Guests in your party<input required type="number" min="0" max="10" name="partySize" value="0"></label>
-            <label>Plus-one name (if applicable)<input name="plusOneName" placeholder="Optional"></label>
-            <label>Dietary needs / allergies<textarea name="dietary" rows="2" placeholder="Optional"></textarea></label>
-            <label>Message for the couple<textarea name="message" rows="3" placeholder="Optional"></textarea></label>
-            <button class="btn btn-solid" type="submit">Submit RSVP ✦</button>
-            <a class="btn btn-ghost" data-wa target="_blank" rel="noopener">Message the Couple</a>
-            <p id="rsvpStatus" class="rsvp-status" role="status" aria-live="polite"></p>
-            <div id="rsvpQr" class="rsvp-qr" hidden></div>
-          </form>
-        </div>
-        <aside class="rsvp-aside">
-          <div class="aside-block reveal"><h4>How it works</h4><p>Submit once → receive your unique QR code → show it at the entrance → usher scans it → your attendance is confirmed instantly.</p></div>
-          <div class="aside-block reveal" style="--d:.1s"><h4>On the day</h4><p>Your QR code is linked to your name and party size. A second scan is automatically flagged to prevent duplicate entry.</p></div>
-          <div class="aside-block reveal" style="--d:.2s"><h4>Need help?</h4><p>You can still message Benson &amp; Precious on WhatsApp using the button in this form.</p></div>
-        </aside>
-      </div>
-    </div>
-
-          <div id="statusLookupPanel" class="status-lookup-panel" hidden>
-        <h3>Check your status</h3>
-        <p class="status-lookup-hint">Enter your Guest ID to see payment status and seat assignment.</p>
-        <label class="status-lookup-label" for="statusGuestId">Guest ID</label>
-        <div class="status-lookup-row">
-          <input id="statusGuestId" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" placeholder="BP-XXXXXX">
-          <button type="button" id="statusLookupBtn" class="btn btn-solid">Check</button>
-        </div>
-        <div id="statusLookupResult" class="status-lookup-result" role="status" aria-live="polite"></div>
-        <button type="button" id="closeStatusLookup" class="status-lookup-close">Close</button>
-      </div>
-
-  </div>
-</section>
-
-<!-- ================= FAQ ================= -->
-<section id="faq">
-  <div class="wrap">
-    <header class="sec-head" style="text-align:center">
-      <p class="sec-kicker reveal">Good to Know</p>
-      <h2 class="sec-title mask"><span class="mask-inner">Questions, Answered</span></h2>
-    </header>
-
-    <div class="faq-list">
-      <div class="faq-item reveal">
-        <button class="faq-q" aria-expanded="false">How do I RSVP?<span class="fx">+</span></button>
-        <div class="faq-a"><div><p>IF RSVP is closed contact the RSVP team using WhatsApp.</p></div></div>
-      </div>
-      <div class="faq-item reveal" style="--d:.05s">
-        <button class="faq-q" aria-expanded="false">What time should I arrive?<span class="fx">+</span></button>
-        <div class="faq-a"><div><p>Guest arrival begins at 12:00 hrs in Ballroom 1, with the welcome toast at 12:30 hrs. The ceremony starts at 13:00 hrs sharp — please be seated by 12:45.</p></div></div>
-      </div>
-      <div class="faq-item reveal" style="--d:.1s">
-        <button class="faq-q" aria-expanded="false">Which ballroom do I go to?<span class="fx">+</span></button>
-        <div class="faq-a"><div><p>Ballroom 1 hosts the arrival, welcome toast, ceremony and cake cutting (12:00–13:45 hrs). From 14:30 hrs everything moves to Ballroom 2 for the MC, bridal team entrance, dinner buffet, program and present presentation, ending with the couple's exit at 21:00 hrs</p></div></div>
-      </div>
-      <div class="faq-item reveal" style="--d:.15s">
-        <button class="faq-q" aria-expanded="false">What is the dress code?<span class="fx">+</span></button>
-        <div class="faq-a"><div><p>Formal / black-tie for gents. We lovingly suggest shades of burgundy, rose gold, cream and champagne  — and strictly no white and ivory, reserved for the bride.</p></div></div>
-      </div>
-      <div class="faq-item reveal" style="--d:.2s">
-        <button class="faq-q" aria-expanded="false">Is parking available at the venue?<span class="fx">+</span></button>
-        <div class="faq-a"><div><p>Yes — complimentary valet is available at Delta Hotels City Center. The hotel is also a short taxi ride from Doha's Corniche and City Center metro areas.</p></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-</main>
-
-<!-- ================= FOOTER ================= -->
-<footer>
-  <p class="f-mono"><span data-bind="partnerA">Benson</span><em>&amp;</em><span data-bind="partnerB">Precious</span></p>
-  <p class="f-date" id="footDate">10 · 10 · 2026 — Doha, Qatar</p>
-  <p class="f-tag" id="hashtag">#BensonAndPrecious2026</p>
-  <p class="f-tagline" data-bind="tagline">Elegance of Excellence</p>
-  <nav class="f-nav" aria-label="Footer">
-    <a href="#story">Story</a><a href="#details">Details</a><a href="#schedule">Program</a><a href="#gallery">Gallery</a><a href="#rsvp">RSVP</a><a href="#faq">FAQ</a>
-  </nav>
-  <p class="f-small">GEN 21:1 · And the LORD did for Benson &amp; Precious as He had promised. @softazklabs2026</p>
-</footer>
-
-<!-- lightbox -->
-<div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
-  <button class="lb-btn lb-close" id="lbClose" aria-label="Close">✕</button>
-  <button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous photo">←</button>
-  <img id="lbImg" src="" alt="">
-  <p class="lb-cap" id="lbCap"></p>
-  <button class="lb-btn lb-next" id="lbNext" aria-label="Next photo">→</button>
-</div>
-
-<div id="toast" role="status"></div>
-
-<script>
-(function(){
-  "use strict";
-  var CONFIG = window.WEDDING_CONFIG || {};
-  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var $ = function(s){ return document.querySelector(s); };
-  var $$ = function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
-
-  /* ---------- config bindings ---------- */
-  var target = new Date(CONFIG.weddingDateISO || "2026-10-10T13:00:00+03:00");
-  var DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-  var MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
-  var dateLong = DAYS[target.getDay()]+", "+MONTHS[target.getMonth()]+" "+target.getDate()+", "+target.getFullYear();
-  var hashtag = "#"+((CONFIG.partnerA||"Benson")+(CONFIG.partnerB||"Precious")).replace(/[^A-Za-z]/g,"")+"2026";
-
-  $$("[data-bind]").forEach(function(el){
-    var k = el.getAttribute("data-bind");
-    if(k==="partnerA") el.textContent = CONFIG.partnerA || "Benson";
-    if(k==="partnerB") el.textContent = CONFIG.partnerB || "Precious";
-    if(k==="rsvpDeadline") el.textContent = CONFIG.rsvpDeadline || "September 15, 2026";
-    if(k==="theme") el.textContent = CONFIG.themeNote || "Burgundy & Rose Gold";
-    if(k==="tagline") el.textContent = CONFIG.tagline || "Elegance of Excellence";
-  });
-  $("#heroDateLine").textContent = dateLong + " · Doha, Qatar";
-  $("#footDate").textContent = target.getDate()+" · "+(target.getMonth()+1)+" · "+target.getFullYear()+" — Doha, Qatar";
-  $("#hashtag").textContent = hashtag;
-  document.title = (CONFIG.partnerA||"Benson")+" & "+(CONFIG.partnerB||"Precious")+" | "+MONTHS[target.getMonth()]+" "+target.getDate()+", "+target.getFullYear();
-
-  /* ---------- WhatsApp + structured RSVP ---------- */
-  function waURL(){
-    var A=CONFIG.partnerA||"Benson", B=CONFIG.partnerB||"Precious";
-    var msg="Hello "+A+" & "+B+"! 💍\nI have a question about the wedding RSVP.\n\nThank you! ✨";
-    var num=String(CONFIG.whatsappNumber||"").replace(/\D/g,"");
-    return (num ? "https://wa.me/"+num : "https://api.whatsapp.com/send")+"?text="+encodeURIComponent(msg);
-  }
-  $$('[data-wa]').forEach(function(a){ a.href=waURL(); });
-
-  var rsvpForm=$("#rsvpForm"), rsvpStatus=$("#rsvpStatus"), rsvpQr=$("#rsvpQr");
-  var rsvpSection=$("#rsvp"), rsvpOpenView=$("#rsvpOpenView"), rsvpClosedView=$("#rsvpClosedView");
-
-  async function applyRsvpVisibility(){
-    if(!CONFIG.RSVP_API_URL) return;
-    try{
-      var res=await fetch(CONFIG.RSVP_API_URL+"?action=rsvpStatus",{method:"GET",cache:"no-store"});
-      var data=await res.json();
-      var open = !!(data && data.open === true);
-      if(rsvpSection) rsvpSection.classList.toggle("rsvp-is-closed", !open);
-      if(rsvpOpenView){
-        if(open){ rsvpOpenView.classList.remove("is-hidden"); rsvpOpenView.removeAttribute("hidden"); }
-        else { rsvpOpenView.classList.add("is-hidden"); rsvpOpenView.setAttribute("hidden",""); }
-      }
-      if(rsvpClosedView){
-        if(open){ rsvpClosedView.classList.remove("is-visible"); rsvpClosedView.setAttribute("hidden",""); }
-        else { rsvpClosedView.classList.add("is-visible"); rsvpClosedView.removeAttribute("hidden"); }
-      }
-      if(rsvpForm){
-        Array.prototype.forEach.call(rsvpForm.elements, function(el){ el.disabled = !open; });
-      }
-      $$(".nav-cta").forEach(function(a){
-        if((a.getAttribute("href")||"")==="#rsvp"){
-          a.textContent = open ? "RSVP" : "RSVP Closed";
-          a.title = open ? "RSVP" : "RSVP is closed — WhatsApp to respond";
-          a.style.opacity = open ? "" : "0.85";
-        }
-      });
-      // Re-bind WhatsApp links (including closed-view button)
-      $$("[data-wa]").forEach(function(a){ a.href=waURL(); });
-    }catch(err){
-      console.warn("rsvpStatus check failed", err);
-    }
-  }
-  applyRsvpVisibility();
-  setInterval(applyRsvpVisibility, 60000);
-
-  function escapeHtmlStatus(v){
-    return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-  }
-  function openStatusLookupPanel(){
-    var panel=$("#statusLookupPanel");
-    if(!panel) return;
-    panel.hidden=false;
-    panel.classList.add("is-open");
-    var input=$("#statusGuestId");
-    if(input){ input.focus(); }
-  }
-  function closeStatusLookupPanel(){
-    var panel=$("#statusLookupPanel");
-    if(!panel) return;
-    panel.classList.remove("is-open");
-    panel.hidden=true;
-    var res=$("#statusLookupResult");
-    if(res){ res.className="status-lookup-result"; res.innerHTML=""; }
-  }
-  async function runStatusLookup(){
-    var input=$("#statusGuestId");
-    var resEl=$("#statusLookupResult");
-    var btn=$("#statusLookupBtn");
-    if(!input||!resEl) return;
-    var id=String(input.value||"").trim();
-    if(!id){
-      resEl.className="status-lookup-result show err";
-      resEl.textContent="Please enter your Guest ID.";
-      return;
-    }
-    if(!CONFIG.RSVP_API_URL){
-      resEl.className="status-lookup-result show err";
-      resEl.textContent="Status service is not connected.";
-      return;
-    }
-    if(btn){ btn.disabled=true; btn.textContent="Checking…"; }
-    resEl.className="status-lookup-result";
-    resEl.innerHTML="";
-    try{
-      var res=await fetch(CONFIG.RSVP_API_URL+"?action=lookup&id="+encodeURIComponent(id),{method:"GET",cache:"no-store"});
-      var data=await res.json();
-      if(data.status==="not_found"||data.found===false){
-        resEl.className="status-lookup-result show err";
-        resEl.textContent=data.message||"No guest found with that Guest ID.";
-        return;
-      }
-      if(data.status!=="success"){
-        resEl.className="status-lookup-result show err";
-        resEl.textContent=data.message||"Could not look up this Guest ID.";
-        return;
-      }
-      var vip = data.paymentKind==="vip" ? ' <span style="color:var(--gold-300);font-weight:700">VIP</span>' : "";
-      resEl.className="status-lookup-result show";
-      resEl.innerHTML=
-        '<div class="row"><span class="k">Name</span><span class="v">'+escapeHtmlStatus(data.name||"—")+vip+'</span></div>'+
-        '<div class="row"><span class="k">Guest ID</span><span class="v">'+escapeHtmlStatus(data.guestId)+'</span></div>'+
-        '<div class="row"><span class="k">Payment</span><span class="v">'+escapeHtmlStatus(data.paymentLabel||"—")+'</span></div>'+
-        '<div class="row"><span class="k">Seat</span><span class="v">'+escapeHtmlStatus(data.seatLabel||"Not assigned")+'</span></div>';
-    }catch(err){
-      resEl.className="status-lookup-result show err";
-      resEl.textContent="Network error. Please try again.";
-    }finally{
-      if(btn){ btn.disabled=false; btn.textContent="Check"; }
-    }
-  }
-  var openStatusBtn=$("#openStatusLookup");
-  if(openStatusBtn) openStatusBtn.addEventListener("click", function(e){ e.preventDefault(); openStatusLookupPanel(); });
-  var closeStatusBtn=$("#closeStatusLookup");
-  if(closeStatusBtn) closeStatusBtn.addEventListener("click", closeStatusLookupPanel);
-  var statusBtn=$("#statusLookupBtn");
-  if(statusBtn) statusBtn.addEventListener("click", runStatusLookup);
-  var statusInput=$("#statusGuestId");
-  if(statusInput) statusInput.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); runStatusLookup(); } });
-
-
-  if(rsvpForm){
-    rsvpForm.addEventListener("submit", async function(e){
-      e.preventDefault();
-      if(!CONFIG.RSVP_API_URL){ rsvpStatus.textContent="RSVP service is not connected yet. Please use WhatsApp while the organizer connects the Google Apps Script URL."; return; }
-      var fd=new FormData(rsvpForm), data={};
-      fd.forEach(function(v,k){ data[k]=v; });
-      data.partySize=Number(data.partySize||0);
-      data.action="rsvp";
-      rsvpStatus.textContent="Submitting your RSVP…";
-      if(rsvpQr){ rsvpQr.hidden=true; rsvpQr.innerHTML=""; }
-      try{
-        var res=await fetch(CONFIG.RSVP_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)});
-        var out=await res.json();
-        if(out.status==="closed"){
-          rsvpStatus.textContent=out.message||"RSVP is currently closed.";
-          applyRsvpVisibility();
-          return;
-        }
-        if(out.status==="duplicate"){
-          rsvpStatus.innerHTML=(out.message||("We couldn't submit the RSVP. Please check if this is your <strong>"+(out.guestId||out.previousGuestId||"")+"</strong> or use WhatsApp.")) +
-            (out.guestId ? " <button type=\"button\" class=\"status-link-btn\" id=\"dupOpenStatus\">Check status</button>" : "");
-          var dupBtn=$("#dupOpenStatus");
-          if(dupBtn){
-            dupBtn.addEventListener("click", function(){
-              if(rsvpSection) rsvpSection.scrollIntoView({behavior:"smooth"});
-              // Ensure closed view path or still open lookup on open view - create panel if needed
-              openStatusLookupPanel();
-              var gi=$("#statusGuestId");
-              if(gi) gi.value=out.guestId||"";
-            });
-          }
-          return;
-        }
-        if(out.status!=="success") throw new Error(out.message||"Unable to save RSVP");
-        rsvpStatus.innerHTML="✓ RSVP received. Your guest ID is <strong>"+out.guestId+"</strong>. Check your email for your QR pass.";
-        if(out.qrUrl && rsvpQr){ rsvpQr.hidden=false; rsvpQr.innerHTML='<img src="'+out.qrUrl+'" alt="Your wedding QR code" style="width:220px;height:220px;object-fit:contain"><p>Save this QR code. A copy was also emailed to you.</p>'; }
-        rsvpForm.reset();
-      }catch(err){ rsvpStatus.textContent="We couldn't submit the RSVP. Please try again or use WhatsApp."; }
-    });
-  }
-
-  /* ---------- nav ---------- */
-  var nav = $("#siteNav"), burger = $("#navBurger");
-  window.addEventListener("scroll", function(){ nav.classList.toggle("scrolled", window.scrollY > 40); }, {passive:true});
-  burger.addEventListener("click", function(){
-    var open = document.body.classList.toggle("menu-open");
-    burger.setAttribute("aria-expanded", open ? "true" : "false");
-    document.body.style.overflow = open ? "hidden" : "";
-  });
-  $$("#navLinks a").forEach(function(a){
-    a.addEventListener("click", function(){
-      document.body.classList.remove("menu-open");
-      document.body.style.overflow = "";
-      burger.setAttribute("aria-expanded","false");
-    });
-  });
-
-  var secIds = ["story","details","schedule","gallery","rsvp","faq"];
-  var navMap = {};
-  $$("#navLinks a").forEach(function(a){ var h=a.getAttribute("href"); if(h && h.charAt(0)==="#") navMap[h.slice(1)] = a; });
-  var secIO = new IntersectionObserver(function(es){
-    es.forEach(function(en){
-      if(en.isIntersecting){
-        $$("#navLinks a").forEach(function(a){ a.classList.remove("active"); });
-        var l = navMap[en.target.id]; if(l) l.classList.add("active");
-      }
-    });
-  }, {rootMargin:"-40% 0px -55% 0px"});
-  secIds.forEach(function(id){ var el = document.getElementById(id); if(el) secIO.observe(el); });
-
-  /* ---------- reveal on scroll ---------- */
-  var revEls = $$(".reveal, .mask");
-  if(reduced){ revEls.forEach(function(el){ el.classList.add("in"); }); }
-  else{
-    var io = new IntersectionObserver(function(es){
-      es.forEach(function(en){
-        if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); }
-      });
-    }, {threshold:.12, rootMargin:"0px 0px -6% 0px"});
-    revEls.forEach(function(el){ io.observe(el); });
-  }
-
-  /* ---------- countdown ---------- */
-  var cd = {d:$("#cdD"), h:$("#cdH"), m:$("#cdM"), s:$("#cdS")};
-  function pad(n){ return (n<10?"0":"")+n; }
-  function setCell(el, val){
-    if(el.textContent !== val){
-      el.textContent = val;
-      if(!reduced){ el.classList.remove("tick"); void el.offsetWidth; el.classList.add("tick"); }
-    }
-  }
-  function tick(){
-    var diff = target.getTime() - Date.now();
-    if(diff <= 0){
-      $("#countdown").style.display = "none";
-      $("#cdNote").textContent = "Just married ✦ " + dateLong;
-      return;
-    }
-    var s = Math.floor(diff/1000);
-    setCell(cd.d, pad(Math.floor(s/86400)));
-    setCell(cd.h, pad(Math.floor(s%86400/3600)));
-    setCell(cd.m, pad(Math.floor(s%3600/60)));
-    setCell(cd.s, pad(s%60));
-  }
-  tick(); setInterval(tick, 1000);
-
-  /* ---------- falling petals ---------- */
-  var cv = $("#petals");
-  if(cv && !reduced){
-    var ctx = cv.getContext("2d"), hero = $(".hero"), petals = [], W=0, H=0;
-    var COLORS = ["rgba(215,163,179,.75)","rgba(201,138,160,.65)","rgba(230,194,205,.7)","rgba(183,110,121,.6)","rgba(243,198,165,.55)"];
-    function resize(){ W = cv.width = hero.clientWidth; H = cv.height = hero.clientHeight; }
-    function make(seed){
-      return { x:Math.random()*W, y:seed?Math.random()*H:-20, r:5+Math.random()*7,
-        vy:.5+Math.random()*.9, vx:-.3+Math.random()*.6, a:Math.random()*Math.PI*2,
-        spin:-.02+Math.random()*.04, sway:Math.random()*Math.PI*2, c:COLORS[(Math.random()*COLORS.length)|0] };
-    }
-    resize(); window.addEventListener("resize", resize);
-    for(var i=0;i<26;i++) petals.push(make(true));
-    (function loop(){
-      requestAnimationFrame(loop);
-      if(document.hidden) return;
-      ctx.clearRect(0,0,W,H);
-      petals.forEach(function(p,idx){
-        p.y += p.vy; p.sway += .012; p.x += p.vx + Math.sin(p.sway)*.5; p.a += p.spin;
-        if(p.y > H+24 || p.x < -30 || p.x > W+30) petals[idx] = make(false);
-        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a);
-        ctx.fillStyle = p.c; ctx.beginPath();
-        ctx.ellipse(0,0,p.r,p.r*.55,0,0,Math.PI*2); ctx.fill();
-        ctx.restore();
-      });
-    })();
-  }
-
-  /* ---------- gallery lightbox (photo items only) ---------- */
-  var lb = $("#lightbox"), lbImg = $("#lbImg"), lbCap = $("#lbCap");
-  var shots = [];
-  $$(".gal-item").forEach(function(f){
-    var img = f.querySelector("img");
-    if(!img) return; // black placeholder tiles are not clickable
-    var i = shots.length;
-    shots.push({ src: img.src, cap: (f.querySelector(".gal-cap")||{}).textContent || "" });
-    f.addEventListener("click", function(){ lbShow(i); lb.classList.add("open"); document.body.style.overflow="hidden"; });
-  });
-  var lbIdx = 0;
-  function lbShow(i){
-    lbIdx = (i+shots.length)%shots.length;
-    lbImg.src = shots[lbIdx].src; lbImg.alt = shots[lbIdx].cap;
-    lbCap.textContent = shots[lbIdx].cap;
-  }
-  function lbHide(){ lb.classList.remove("open"); document.body.style.overflow=""; }
-  $("#lbClose").addEventListener("click", lbHide);
-  $("#lbPrev").addEventListener("click", function(e){ e.stopPropagation(); lbShow(lbIdx-1); });
-  $("#lbNext").addEventListener("click", function(e){ e.stopPropagation(); lbShow(lbIdx+1); });
-  lb.addEventListener("click", function(e){ if(e.target === lb) lbHide(); });
-  document.addEventListener("keydown", function(e){
-    if(!lb.classList.contains("open")) return;
-    if(e.key==="Escape") lbHide();
-    if(e.key==="ArrowLeft") lbShow(lbIdx-1);
-    if(e.key==="ArrowRight") lbShow(lbIdx+1);
-  });
-
-  /* ---------- FAQ accordion ---------- */
-  $$(".faq-q").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      var item = btn.parentElement, wasOpen = item.classList.contains("open");
-      $$(".faq-item.open").forEach(function(o){
-        o.classList.remove("open");
-        o.querySelector(".faq-q").setAttribute("aria-expanded","false");
-      });
-      if(!wasOpen){ item.classList.add("open"); btn.setAttribute("aria-expanded","true"); }
-    });
-  });
-
-  /* ---------- toast ---------- */
-  var toastT;
-  function toast(msg){
-    var t = $("#toast"); t.textContent = msg; t.classList.add("show");
-    clearTimeout(toastT); toastT = setTimeout(function(){ t.classList.remove("show"); }, 4200);
-  }
-
-  /* ---------- Calendar: Google Calendar + downloadable ICS ---------- */
-  function padICS(n){ return String(n).padStart(2, "0"); }
-  function icsDate(d){
-    return d.getUTCFullYear()+padICS(d.getUTCMonth()+1)+padICS(d.getUTCDate())+
-      "T"+padICS(d.getUTCHours())+padICS(d.getUTCMinutes())+"00Z";
-  }
-  function icsEscape(value){
-    return String(value || "").replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\r?\n/g,"\\n");
-  }
-  function gcalDate(d){
-    return d.getUTCFullYear()+padICS(d.getUTCMonth()+1)+padICS(d.getUTCDate())+
-      "T"+padICS(d.getUTCHours())+padICS(d.getUTCMinutes())+padICS(d.getUTCSeconds())+"Z";
-  }
-  function downloadICS(){
-    var A = CONFIG.partnerA || "Benson", B = CONFIG.partnerB || "Precious";
-    var start = new Date(target.getTime());
-    var end = new Date(target.getTime() + 8 * 3600 * 1000);
-    var location = CONFIG.venueCeremony || "Delta Hotels City Center, Doha, Qatar";
-    var description = "Doors 12:00 · Ceremony 13:00 (Ballroom 1) · Reception from 14:30 (Ballroom 2) · " + (CONFIG.tagline || "");
-    var L = [
-      "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//BensonAndPreciousWedding//EN","CALSCALE:GREGORIAN","METHOD:PUBLISH",
-      "BEGIN:VEVENT","UID:bp-wedding-" + target.getTime() + "@bensonandprecious","DTSTAMP:" + icsDate(new Date()),
-      "DTSTART:" + icsDate(start),"DTEND:" + icsDate(end),
-      "SUMMARY:" + icsEscape("Wedding of " + A + " & " + B),
-      "LOCATION:" + icsEscape(location),"DESCRIPTION:" + icsEscape(description),
-      "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:" + icsEscape("Wedding tomorrow 💍"),"TRIGGER:-P1D","END:VALARM",
-      "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:" + icsEscape("Wedding starts in one hour"),"TRIGGER:-PT1H","END:VALARM",
-      "END:VEVENT","END:VCALENDAR"
-    ];
-    var blob = new Blob([L.join("\r\n")], {type:"text/calendar;charset=utf-8"});
-    var url = URL.createObjectURL(blob), a = document.createElement("a");
-    a.href = url; a.download = "Benson-Precious-Wedding.ics";
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-    toast("Calendar file downloaded ✦");
-  }
-  function googleCalendarURL(){
-    var A = CONFIG.partnerA || "Benson", B = CONFIG.partnerB || "Precious";
-    var start = new Date(target.getTime());
-    var end = new Date(target.getTime() + 8 * 3600 * 1000);
-    var params = new URLSearchParams({
-      action:"TEMPLATE", text:"Wedding of " + A + " & " + B,
-      dates: gcalDate(start) + "/" + gcalDate(end),
-      location:CONFIG.venueCeremony || "Delta Hotels City Center, Doha, Qatar",
-      details:"Doors 12:00 · Ceremony 13:00 (Ballroom 1) · Reception from 14:30 (Ballroom 2). " + (CONFIG.tagline || "")
-    });
-    return "https://calendar.google.com/calendar/render?" + params.toString();
-  }
-  $("#icsBtn").addEventListener("click", function(){
-    if(window.confirm("Add the wedding to Google Calendar?\n\nChoose Cancel to download a calendar file (.ics) for Apple Calendar, Outlook or other calendar apps.")){
-      window.open(googleCalendarURL(), "_blank", "noopener");
-      toast("Opening Google Calendar ✦");
-    } else downloadICS();
-  });
-})();
-</script>
-</body>
-</html>
